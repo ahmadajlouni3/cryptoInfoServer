@@ -6,19 +6,20 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors())
+app.use(cors());
+app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
 
 app.get("/" ,(req,res) => {
-  const {limit} = req.query;
+  const {symbol} = req.query;
     let response = null;
     const promiseFetching = new Promise(async (resolve, reject) => {
       try {
-        if (limit){
-          response = await axios.get(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?aux=circulating_supply,total_supply,max_supply,cmc_rank,num_market_pairs&start=1&limit=${limit}`, {
+        if (symbol){
+          response = await axios.get(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=${symbol}`, {
             headers: {
-              'X-CMC_PRO_API_KEY': process.env.API_KEY,
+              'X-CMC_PRO_API_KEY': process.env.API_KEY || "f8177fc0-16ee-4c66-bda8-b2d6ff8a12c8",
             },
           });
         }else{
@@ -51,6 +52,6 @@ app.get("/" ,(req,res) => {
 
 
 
-app.listen(process.env.PORT , () => {
+app.listen(process.env.PORT, () => {
     console.log("You are in the server at port 3000");
 })
